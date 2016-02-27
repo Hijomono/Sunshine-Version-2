@@ -26,11 +26,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 public class DetailActivity extends ActionBarActivity {
 
+    public static final String FORECAST_EXTRA = "DetailActivity.FORECAST_EXTRA";
 
+    private ShareActionProvider mShareActionProvider;
+
+    public String getForecast() {
+        return getIntent().getStringExtra(FORECAST_EXTRA);
+    }
 
     /**
      * Use this method to create the intent to start this activity.
@@ -41,8 +48,20 @@ public class DetailActivity extends ActionBarActivity {
      */
     public static Intent createActivityIntent(final String forecast, final Context context) {
         final Intent intent = new Intent(context, DetailActivity.class);
-        intent.putExtra(PlaceholderFragment.FORECAST_EXTRA, forecast);
+        intent.putExtra(FORECAST_EXTRA, forecast);
         return intent;
+    }
+
+    // Call to update the share intent
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
+    }
+
+    public void doShare(Intent shareIntent) {
+        // When you want to share set the share intent.
+        mShareActionProvider.setShareIntent(shareIntent);
     }
 
     @Override
@@ -64,6 +83,11 @@ public class DetailActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.detail, menu);
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+
+        // Fetch and store ShareActionProvider
+        mShareActionProvider = (ShareActionProvider) item.getActionProvider();
         return true;
     }
 
@@ -78,32 +102,30 @@ public class DetailActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
+        } else if (id == R.id.menu_item_share) {
+            final String sharedForecast = String.format("%s #SunshineApp", getForecast());
+            Intent shareIntent = new Intent();
+            shareIntent.putExtra(Intent.EXTRA_TEXT, sharedForecast);
+            setShareIntent(shareIntent);
+            doShare(shareIntent);
         }
 
         return super.onOptionsItemSelected(item);
     }
 
 
-
     /**
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {
-
-        public static final String FORECAST_EXTRA = "DetailActivity.FORECAST_EXTRA";
-
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-            Intent intent = getActivity().getIntent();
-            if (intent != null && intent.hasExtra(FORECAST_EXTRA)) {
-                String forecastStr = intent.getStringExtra(FORECAST_EXTRA);
+            final String forecast = ((DetailActivity)getActivity()).getForecast();
                 ((TextView) rootView.findViewById(R.id.detail_text))
-                        .setText(forecastStr);
-            }
+                        .setText(forecast);
             return rootView;
         }
     }
