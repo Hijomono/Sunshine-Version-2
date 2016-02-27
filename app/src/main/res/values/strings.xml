@@ -20,13 +20,6 @@
     <string name="pref_units_imperial">imperial</string>
     <string name="pref_metric_label">Metric</string>
     <string name="pref_imperial_label">Imperial</string>
-    <string-array name="units_entries">
-        <item>@string/pref_metric_label</item>
-        <item>@string/pref_imperial_label</item>
-    </string-array>
-    <string-array name="units_values">
-        <item>@string/pref_units_metric</item>
-        <item>@string/pref_units_imperial</item>
-    </string-array>
+    <string name="pref_share_title">Share</string>
 
 </resources>
