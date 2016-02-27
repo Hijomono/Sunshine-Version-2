@@ -31,7 +31,15 @@ import android.widget.TextView;
 public class DetailActivity extends ActionBarActivity {
 
 
-    public static Intent detailActivityIntent(final String forecast, final Context context) {
+
+    /**
+     * Use this method to create the intent to start this activity.
+     *
+     * @param forecast String whith the forecast to be displayed
+     * @param context  The context to create the activity
+     * @return An intent with all the information to start the activity
+     */
+    public static Intent createActivityIntent(final String forecast, final Context context) {
         final Intent intent = new Intent(context, DetailActivity.class);
         intent.putExtra(PlaceholderFragment.FORECAST_EXTRA, forecast);
         return intent;
