@@ -20,9 +20,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +34,22 @@ import android.widget.TextView;
 
 public class DetailActivity extends ActionBarActivity {
 
+    public static final String FORECAST_EXTRA = "DetailActivity.FORECAST_EXTRA";
 
-    public static Intent detailActivityIntent(final String forecast, final Context context) {
+    public String getForecast() {
+        return getIntent().getStringExtra(FORECAST_EXTRA);
+    }
+
+    /**
+     * Use this method to create the intent to start this activity.
+     *
+     * @param forecast String whith the forecast to be displayed
+     * @param context  The context to create the activity
+     * @return An intent with all the information to start the activity
+     */
+    public static Intent createActivityIntent(final String forecast, final Context context) {
         final Intent intent = new Intent(context, DetailActivity.class);
-        intent.putExtra(PlaceholderFragment.FORECAST_EXTRA, forecast);
+        intent.putExtra(FORECAST_EXTRA, forecast);
         return intent;
     }
 
@@ -44,7 +60,7 @@ public class DetailActivity extends ActionBarActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new DetailFragment())
                     .commit();
         }
 
@@ -76,27 +92,60 @@ public class DetailActivity extends ActionBarActivity {
     }
 
 
-
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class DetailFragment extends Fragment {
 
-        public static final String FORECAST_EXTRA = "DetailActivity.FORECAST_EXTRA";
+        private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
+        private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
+        private String forecast;
+
+        public DetailFragment() {
+            setHasOptionsMenu(true);
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-            Intent intent = getActivity().getIntent();
-            if (intent != null && intent.hasExtra(FORECAST_EXTRA)) {
-                String forecastStr = intent.getStringExtra(FORECAST_EXTRA);
-                ((TextView) rootView.findViewById(R.id.detail_text))
-                        .setText(forecastStr);
-            }
+
+            forecast = ((DetailActivity) getActivity()).getForecast();
+            ((TextView) rootView.findViewById(R.id.detail_text))
+                    .setText(forecast);
             return rootView;
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            // Inflate the menu; this adds items to the action bar if it is present.
+            inflater.inflate(R.menu.detailfragment, menu);
+
+            // Retrieve the share menu item
+            MenuItem menuItem = menu.findItem(R.id.menu_item_share);
+
+            // Get the provider and hold onto it to set/change the share intent.
+            ShareActionProvider detailShareActionProvider =
+                    (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
+
+            // Attach an intent to this ShareActionProvider.  You can update this at any time,
+            // like when the user selects a new piece of data they might like to share.
+            if (detailShareActionProvider != null) {
+                detailShareActionProvider.setShareIntent(createShareForecastIntent());
+            } else {
+                Log.d(LOG_TAG, "Share Action Provider is null?");
+            }
+        }
+
+        private Intent createShareForecastIntent() {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT,
+                    forecast + FORECAST_SHARE_HASHTAG);
+            return shareIntent;
         }
     }
 }
