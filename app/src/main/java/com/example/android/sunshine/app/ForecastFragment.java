@@ -115,7 +115,7 @@ public class ForecastFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 final String forecast = mForecastAdapter.getItem(position);
-                startActivity(DetailActivity.detailActivityIntent(forecast, getActivity()));
+                startActivity(DetailActivity.createActivityIntent(forecast, getActivity()));
             }
         });
 
