@@ -36,9 +36,8 @@ public class DetailActivity extends ActionBarActivity {
 
     public static final String FORECAST_EXTRA = "DetailActivity.FORECAST_EXTRA";
 
-    public String getForecast() {
-        return getIntent().getStringExtra(FORECAST_EXTRA);
-    }
+    public String forecast;
+
 
     /**
      * Use this method to create the intent to start this activity.
@@ -112,9 +111,15 @@ public class DetailActivity extends ActionBarActivity {
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-            forecast = ((DetailActivity) getActivity()).getForecast();
-            ((TextView) rootView.findViewById(R.id.detail_text))
-                    .setText(forecast);
+            Intent intent = getActivity().getIntent();
+            if (intent != null) {
+                forecast = intent.getDataString();
+            }
+
+            if (null != forecast) {
+                ((TextView) rootView.findViewById(R.id.detail_text))
+                        .setText(forecast);
+            }
             return rootView;
         }
 
