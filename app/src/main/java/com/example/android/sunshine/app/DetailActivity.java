@@ -30,7 +30,7 @@ public class DetailActivity extends ActionBarActivity {
     /**
      * Use this method to create the intent to start this activity.
      *
-     * @param forecast String whith the forecast to be displayed
+     * @param forecast String with the forecast to be displayed
      * @param context  The context to create the activity
      * @return An intent with all the information to start the activity
      */
