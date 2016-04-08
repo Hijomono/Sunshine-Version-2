@@ -104,9 +104,8 @@ public class ForecastFragment extends Fragment implements android.support.v4.app
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             final Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
 
-        listPosition = savedInstanceState.getInt(POSITION_KEY, 0);
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
