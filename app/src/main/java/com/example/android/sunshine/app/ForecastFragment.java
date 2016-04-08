@@ -65,6 +65,7 @@ public class ForecastFragment extends Fragment implements android.support.v4.app
     private ListView mListView;
     private int listPosition = ListView.INVALID_POSITION;
     private ForecastAdapter mForecastAdapter;
+    private boolean mUseTodayLayout;
 
     public ForecastFragment() {
     }
@@ -142,6 +143,8 @@ public class ForecastFragment extends Fragment implements android.support.v4.app
             listPosition = savedInstanceState.getInt(POSITION_KEY);
         }
 
+        mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+
         return rootView;
     }
 
@@ -202,13 +205,20 @@ public class ForecastFragment extends Fragment implements android.support.v4.app
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+    public void onLoaderReset(Loader<Cursor> loader) {
         mForecastAdapter.swapCursor(null);
     }
 
     public void onLocationChanged() {
         updateWeather();
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+    }
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        mUseTodayLayout = useTodayLayout;
+        if (mForecastAdapter != null) {
+            mForecastAdapter.setUseTodayLayout(mUseTodayLayout);
+        }
     }
 
     /**
