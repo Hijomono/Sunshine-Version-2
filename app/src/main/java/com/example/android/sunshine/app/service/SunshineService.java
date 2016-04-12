@@ -1,8 +1,10 @@
 package com.example.android.sunshine.app.service;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -34,7 +36,7 @@ public class SunshineService extends IntentService {
     public static final String LOCATION_QUERY_EXTRA = "lqe";
     private final String LOG_TAG = SunshineService.class.getSimpleName();
 
-    public SunshineService(){
+    public SunshineService() {
         super("Sunshine");
     }
 
@@ -317,5 +319,14 @@ public class SunshineService extends IntentService {
         // If it exists, return the current ID
         // Otherwise, insert it using the content resolver and the base URI
         return locationId;
+    }
+
+    static public class AlarmReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent sendIntent = new Intent(context, SunshineService.class);
+            sendIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, intent.getStringExtra(LOCATION_QUERY_EXTRA));
+            context.startService(sendIntent);
+        }
     }
 }
